@@ -1,22 +1,34 @@
-local cloneref = (cloneref or clonereference or function(instance) return instance end)
+local cloneref = (cloneref or clonereference or function(i) return i end)
+
 local HttpService = cloneref(game:GetService("HttpService"))
 
 local function Get(url)
-    if game.HttpGet then
+    if writefile and game.HttpGet then
         return game:HttpGet(url)
     else
         return HttpService:GetAsync(url)
     end
 end
 
-local Lucide = loadstring(Get("https://raw.githubusercontent.com/xyzuCode/Icon/refs/heads/main/lucide/dist/Icons.lua"))()
+local LucideIcons = loadstring(
+    Get("https://raw.githubusercontent.com/xyzuCode/Icon/refs/heads/main/lucide/dist/Icons.lua")
+)()
 
-local function GetIcon(name)
-    local icon = Lucide.Icons[name]
-    if not icon then return nil end
-    return {
-        Image             = Lucide.Spritesheets[tostring(icon.Image)],
-        ImageRectSize     = icon.ImageRectSize,
-        ImageRectOffset   = icon.ImageRectPosition,
-    }
+local IconModule = {}
+
+function IconModule.GetIcon(iconName)
+
+    local iconData = LucideIcons.Icons[iconName]
+
+    if iconData then
+        return LucideIcons.Spritesheets[tostring(iconData.Image)]
+    end
+
+    if LucideIcons[iconName] then
+        return LucideIcons[iconName]
+    end
+
+    return nil
 end
+
+return IconModule
